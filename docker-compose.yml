@@ -14,3 +14,5 @@ services:
       dockerfile: docker/Dockerfile.agent
     depends_on:
       - api
+    environment:
+      - API_URL=http://api:8000/metrics

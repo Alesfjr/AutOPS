@@ -1,39 +1,46 @@
 import time
-import  psutil
+import psutil
 import requests
+import os
 
-from agent.logs import ger_logger
+from agent.logs import get_logger
 from agent.services import evaluate_metrics
 
-logger=ger_logger(__name__)
+logger = get_logger(__name__)
 
-API_URL= "https://api:8000/metrics"
+API_URL = os.getenv("API_URL", "http://localhost:8000/metrics")
+
 
 def collect_metrics() -> dict:
+    load_1, load_5, load_15 = psutil.getloadavg()
+
     return {
-        "cpu": psutil.cpu_percent(interval=1),
-        "memory": psutil.virtual_memory().percent,
-        "disk": psutil.disk_usage("/").percent,
-        "load_average":psutil.getloadavg()
+        "cpu_percent": psutil.cpu_percent(interval=1),
+        "memory_percent": psutil.virtual_memory().percent,
+        "disk_percent": psutil.disk_usage("/").percent,
+        "load_average_percent": load_1
     }
 
+
 def send_metrics(data: dict):
+    logger.info(f"Payload enviado: {data}")
 
     try:
-        response =requests.post(url=API_URL, json=data, timeout=5)
+        response = requests.post(API_URL, json=data, timeout=5)
         logger.info(f"Enviado para API | status={response.status_code}")
     except Exception as error:
-        logger.error(f"Erro ao enviar metricas :{error}")
+        logger.error(f"Erro ao enviar metricas: {error}")
+
 
 if __name__ == "__main__":
-    logger.info("Agent iniciado ")
+    logger.info("Agent iniciado")
 
     while True:
         metrics = collect_metrics()
-        evaluted=evaluate_metrics(metrics)
+        evaluated = evaluate_metrics(metrics)
 
-        logger.info(evaluted)
+        logger.info(f"Avaliação local: {evaluated}")
+        logger.info(f"Métricas coletadas: {metrics}")
         send_metrics(metrics)
 
         time.sleep(5)
-

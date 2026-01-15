@@ -1,7 +1,7 @@
 import logging
 import sys
 
-def ger_logger(name: str)->logging.Logger:
+def get_logger(name: str)->logging.Logger:
     logger = logging.getLogger(name)
     logger.setLevel(logging.INFO)
 

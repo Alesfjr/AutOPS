@@ -1,10 +1,8 @@
 from fastapi import FastAPI
 from pydantic import BaseModel
-from datetime import datetime, timezone
+from datetime import datetime
 
-app= FastAPI(title="AutOPS API")
-
-LAST_METRICS = {}
+app = FastAPI(title="AutOPS API")
 
 class Metrics(BaseModel):
     cpu_percent: float
@@ -12,21 +10,22 @@ class Metrics(BaseModel):
     disk_percent: float
     load_average_percent: float
 
-@app.get("/health")
-def health():
-    return {
+LAST_METRICS = {}
 
-        "status": "UP",
-        "time" : datetime.now(timezone.utc).isoformat()
-    }
 @app.post("/metrics")
 def receive_metrics(metrics: Metrics):
     global LAST_METRICS
-    LAST_METRICS = metrics.dict()
-    return{
-        "message":"Metrics received"
+
+    LAST_METRICS = {
+        **metrics.dict(),
+        "received_at": datetime.utcnow().isoformat()
     }
 
-@app.get("/metrics")
-def metrics():
-    return LAST_METRICS
+    return {"status": "received"}
+
+@app.get("/health")
+def health():
+    return {
+        "status": "UP",
+        "time": datetime.utcnow().isoformat()
+    }
