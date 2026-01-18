@@ -1,7 +1,7 @@
 def evaluate_metrics(metrics:dict) -> dict:
     status="OK"
 
-    cpu= metrics.get("cpu",0)
+    cpu= metrics.get("cpu_persent",0)
 
     if cpu>90:
         status="CRITICAL"

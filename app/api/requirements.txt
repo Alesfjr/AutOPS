@@ -1,3 +1,6 @@
 fastapi
 uvicorn
 datetime
+sqlalchemy
+pymysql
+prometheus_client

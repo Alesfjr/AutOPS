@@ -2,19 +2,20 @@ import time
 import psutil
 import requests
 import os
-
-from app.agent.logs import get_logger
+import socket
+from .logs import  get_logger
 from app.agent.services import evaluate_metrics
 
 logger = get_logger(__name__)
 
-API_URL = os.getenv("API_URL", "http://localhost:8000/metrics")
+API_URL = os.getenv("API_URL", "http://localhost:8000/ingest/metrics")
 
 
 def collect_metrics() -> dict:
     load_1, load_5, load_15 = psutil.getloadavg()
 
     return {
+        "hostname": socket.gethostname(),
         "cpu_percent": psutil.cpu_percent(interval=1),
         "memory_percent": psutil.virtual_memory().percent,
         "disk_percent": psutil.disk_usage("/").percent,
