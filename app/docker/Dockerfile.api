@@ -1,10 +1,19 @@
-FROM python:3.13
+FROM python:3.13-slim
 
 WORKDIR /app
 
-COPY api/requirements.txt .
+# dependências de sistema para cryptography
+RUN apt-get update && apt-get install -y \
+    gcc \
+    libffi-dev \
+    libssl-dev \
+    && rm -rf /var/lib/apt/lists/*
+
+# dependências Python
+COPY app/api/requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-COPY api/ api/
+# código
+COPY app ./app
 
 CMD ["uvicorn", "app.api.main:app", "--host", "0.0.0.0", "--port", "8000"]

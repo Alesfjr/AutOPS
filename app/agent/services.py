@@ -1,12 +1,14 @@
-def evaluate_metrics(metrics:dict) -> dict:
-    status="OK"
+def evaluate_metrics(metrics: dict) -> dict:
+    status = "OK"
 
-    cpu= metrics.get("cpu_persent",0)
+    cpu = metrics.get("cpu_percent", 0)  # corrigido aqui
 
-    if cpu>90:
-        status="CRITICAL"
+    if cpu > 90:
+        status = "CRITICAL"
     elif cpu >= 75:
-        status="WARNING"
+        status = "WARNING"
 
-    return{"status":status,"cpu":cpu}
-
+    return {
+        "status": status,
+        "cpu": cpu
+    }

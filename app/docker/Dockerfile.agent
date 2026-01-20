@@ -2,9 +2,9 @@ FROM python:3.13
 
 WORKDIR /app
 
-COPY agent/requirements.txt .
+COPY app/agent/requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-COPY agent/ agent/
+COPY app ./app
 
-CMD ["python", "-m", "agent.collector"]
+CMD ["python", "-m", "app.agent.collector"]

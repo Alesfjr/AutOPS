@@ -1,22 +1,19 @@
-version: "3.9"
-
 services:
   api:
     build:
-      context: ./app
-      dockerfile: docker/Dockerfile.api
+      context: .
+      dockerfile: app/docker/Dockerfile.api
     ports:
       - "8000:8000"
     environment:
-      - DATABASE_URL=mysql+pymysql://autoops:autoops@mysql:3306/autoops
+      DATABASE_URL: mysql+pymysql://autops:autops@mysql:3306/autops
     depends_on:
       - mysql
 
-
   agent:
     build:
-      context: ./app
-      dockerfile: docker/Dockerfile.agent
+      context: .
+      dockerfile: app/docker/Dockerfile.agent
     depends_on:
       - api
     environment:
@@ -43,6 +40,7 @@ services:
       - "9090:9090"
     depends_on:
       - api
+
   grafana:
     image: grafana/grafana
     ports:

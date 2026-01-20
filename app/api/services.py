@@ -21,4 +21,4 @@ def evaluate_thresholds(host_id: int, payload: dict, db: Session):
             severity=rule["severity"],
             description=f"Alerta: {metrics_name} em {value}% (Limite: {rule['threshold']}%)"
         )
-        db.add(new_event)
+            db.add(new_event)

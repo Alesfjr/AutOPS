@@ -1,19 +1,14 @@
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
-from app.database import SessionLocal
-from app.models.metrics import MetricsTable, Host, Event
-# Importamos a lógica de decisão
-from app.api.serivces import evaluate_thresholds
+
+from app.database import get_db
+from app.models.metrics import Metrics, Host
+from app.api.services import evaluate_thresholds
+from app.services.prometheus import update_prometheus_metrics
 
 router = APIRouter(prefix="/ingest")
 
 
-def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
 
 
 @router.post("/metrics")
@@ -35,7 +30,7 @@ def ingest_metrics(payload: dict, db: Session = Depends(get_db)):
     # 3. ARMAZENAR (MySQL)
     for key, val in payload.items():
         if isinstance(val, (int, float)):
-            db.add(MetricsTable(
+            db.add(Metrics(
                 host_id=host.id,
                 metric_name=key,
                 metric_value=val
